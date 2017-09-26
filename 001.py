@@ -1,12 +1,13 @@
 ﻿# encoding=utf-8
 import jieba
+import jieba.analyse
 
 ReadPath = "D:\\2016ab.txt"
 wordList = []
+lines = ""
 with open(ReadPath, 'r') as r:
 	for line in r.readlines():
-		words = jieba.cut(line)
-		for word in words:
-			wordList.append(word)
-		#print("Default Mode: " + "/ ".join(words))  # 精确模式
-	print("Default Mode: " + "/ ".join(wordList))
+		lines += line
+	tf = jieba.analyse.extract_tags(lines, topK = 30, withWeight = True)
+	for t in tf:
+		print(t)

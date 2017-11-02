@@ -1,4 +1,4 @@
-# coding: utf-8
+# coding:utf-8
 # @__Author__ = "WDdeBWT"
 # @__Date__ : 2017/10/20
 
@@ -61,7 +61,7 @@ def get_csv_c(read_path, write_path):
     file_list = os.listdir(read_path)
     for file_name in file_list:
         file_name = os.path.join(read_path, file_name)
-        with open(file_name, 'r') as r:
+        with open(file_name, 'r', encoding="utf-8") as r:
             print(file_name)
             for line in r.readlines():
                 print(line)
@@ -82,10 +82,9 @@ def get_csv_c(read_path, write_path):
     write_path = os.path.join(write_path, "chinese_ti_and_ab.txt")
     with open(write_path, 'w') as w:
         for di in rows:
-            w.write(di["YEAR"] + "\n")
-            w.write(di["TI"] + "\n")
-            w.write(di["AB"] + "\n")
-
+            w.write(di["YEAR"])
+            w.write(di["TI"])
+            w.write(di["AB"])
 
 
 read_path_e = "F:\\Files\\JAR\\Journal_of_accounting_research.txt"
@@ -94,7 +93,7 @@ write_path_e = "F:\\Files\\JAR\\KW_new.txt"
 read_path_c = "F:\\Files\\管理科学学报_原始数据\\"
 write_path_c = "F:\\Files\\管理科学学报_初步处理\\"
 
-#get_all_kw(read_path_e, write_path_e)
+# get_all_kw(read_path_e, write_path_e)
 get_csv_c(read_path_c, write_path_c)
 
 

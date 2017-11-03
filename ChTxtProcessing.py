@@ -1,10 +1,12 @@
-# coding:utf-8
+﻿# coding:utf-8
 # @__Author__ = "WDdeBWT"
 # @__Date__ : 2017/10/20
 
 import os
 import re
 import jieba
+import jieba.analyse
+import jieba.posseg as pseg
 import csv
 from textblob import TextBlob
 
@@ -68,8 +70,8 @@ def get_csv_c(read_path, write_path):
                 if line.startswith("Title-题名:  "):
                     ti = line[11:]
                     continue
-                elif line.startswith("Keyword-关键词:  "):
-                    ab = line[14:]
+                elif line.startswith("Summary-摘要:  "):
+                    ab = line[13:]
                     continue
                 elif line.startswith("Year-年:  "):
                     year = line[9:]
@@ -79,39 +81,58 @@ def get_csv_c(read_path, write_path):
                     ti = ""
                     ab = ""
                     continue
-    write_path = os.path.join(write_path, "chinese_ti_and_ab.txt")
-    with open(write_path, 'w') as w:
+    write_path = os.path.join(write_path, "chinese_ti_and_ab.csv")
+    fieldnames = ["ID", "YEAR", "TI", "AB"]
+    stopwords = []
+    stopword = (line.strip() for line in open(StopPath, 'r', encoding='UTF-8').readlines())
+    for word in stopword:
+        stopwords.append(word)
+    err_list = ['\ufeff', '\ue56d', '\ue011', '\ue43a']
+    stopwords = err_list
+    # stopwords = stopwords + err_list
+    csv_li = []
+    with open(write_path, 'w', newline="") as w:
+        writer = csv.DictWriter(w, fieldnames=fieldnames)
+        i = 0
         for di in rows:
-            w.write(di["YEAR"])
-            w.write(di["TI"])
-            w.write(di["AB"])
+            i += 1
+            ti = ""
+            ti_li = []
+            ab = ""
+            ab_li = []
+            # TI分词
+            words = pseg.cut(di["TI"])
+            for word, flag in words:
+                if flag in ('n', 'ns', 'nt', 'nz', 'an', 'v', 'vd', 'vn', 'un'):
+                    ti = ti + " " + word
+            # AB分词
+            words = pseg.cut(di["AB"])
+            for word, flag in words:
+                if flag in ('n', 'ns', 'nt', 'nz', 'an', 'v', 'vd', 'vn', 'un'):
+                    ab = ab + " " + word
+            # 使用textrank提取关键词并提名词的老版本代码
+            # nouns = jieba.analyse.textrank(di["AB"], topK=10000, withWeight=False, allowPOS='n')
+            # for word in nouns:
+            #     if word not in stopwords:
+            #         ab = ab + " " + word
+            csv_li.append({"ID": i, "YEAR": di["YEAR"], "TI": ti, "AB": ab})
+            print(di["YEAR"])
+            print(ti)
+            print(ab)
+            print("--------------------")
+        writer.writerows(csv_li)
 
 
 read_path_e = "F:\\Files\\JAR\\Journal_of_accounting_research.txt"
 write_path_e = "F:\\Files\\JAR\\KW_new.txt"
 
+StopPath = "F:\\Files\\stopWord.txt"
+
 read_path_c = "F:\\Files\\管理科学学报_原始数据\\"
 write_path_c = "F:\\Files\\管理科学学报_初步处理\\"
 
+read_path_ch = "K:\\Ori_Chinese\\"
+write_path_ch = "K:\\Ori_Chinese_out\\"
+
 # get_all_kw(read_path_e, write_path_e)
 get_csv_c(read_path_c, write_path_c)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

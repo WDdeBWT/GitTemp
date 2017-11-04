@@ -1,4 +1,4 @@
-﻿# coding:utf-8
+# coding:utf-8
 # @__Author__ = "WDdeBWT"
 # @__Date__ : 2017/10/20
 
@@ -75,8 +75,9 @@ def get_csv_c(read_path, write_path):
                     continue
                 elif line.startswith("Year-年:  "):
                     year = line[9:]
-                    dict_row = {'YEAR': year, 'TI': ti, 'AB': ab}
-                    rows.append(dict_row)
+                    if "《管理科学学报》" not in ti:
+                        dict_row = {'YEAR': year, 'TI': ti, 'AB': ab}
+                        rows.append(dict_row)
                     year = ""
                     ti = ""
                     ab = ""
@@ -88,8 +89,7 @@ def get_csv_c(read_path, write_path):
     for word in stopword:
         stopwords.append(word)
     err_list = ['\ufeff', '\ue56d', '\ue011', '\ue43a']
-    stopwords = err_list
-    # stopwords = stopwords + err_list
+    stopwords = stopwords + err_list
     csv_li = []
     with open(write_path, 'w', newline="") as w:
         writer = csv.DictWriter(w, fieldnames=fieldnames)
@@ -103,13 +103,15 @@ def get_csv_c(read_path, write_path):
             # TI分词
             words = pseg.cut(di["TI"])
             for word, flag in words:
-                if flag in ('n', 'ns', 'nt', 'nz', 'an', 'v', 'vd', 'vn', 'un'):
-                    ti = ti + " " + word
+                if flag in ('n', 'ns', 'nt', 'nz', 'an', 'vn', 'un'):
+                    if word not in stopwords:
+                        ti = ti + " " + word
             # AB分词
             words = pseg.cut(di["AB"])
             for word, flag in words:
-                if flag in ('n', 'ns', 'nt', 'nz', 'an', 'v', 'vd', 'vn', 'un'):
-                    ab = ab + " " + word
+                if flag in ('n', 'ns', 'nt', 'nz', 'an', 'vn', 'un'):
+                    if word not in stopwords:
+                        ab = ab + " " + word
             # 使用textrank提取关键词并提名词的老版本代码
             # nouns = jieba.analyse.textrank(di["AB"], topK=10000, withWeight=False, allowPOS='n')
             # for word in nouns:
@@ -126,7 +128,7 @@ def get_csv_c(read_path, write_path):
 read_path_e = "F:\\Files\\JAR\\Journal_of_accounting_research.txt"
 write_path_e = "F:\\Files\\JAR\\KW_new.txt"
 
-StopPath = "F:\\Files\\stopWord.txt"
+StopPath = "F:\\Files\\stopWordC.txt"
 
 read_path_c = "F:\\Files\\管理科学学报_原始数据\\"
 write_path_c = "F:\\Files\\管理科学学报_初步处理\\"

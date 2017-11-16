@@ -7,6 +7,7 @@ actions in this script:
 4. loop over the getmsg page until no more message to load
 5. save message to csv file in the same directory of the json file
 """
+import time
 import json
 from selenium import webdriver
 import os
@@ -33,7 +34,10 @@ def get_account_info(info_json):
 def read_page_content(url):
     """ read url body content """
     _CHROME.get(url)
-    return _CHROME.find_element_by_xpath('.//body').text
+    content = []
+    content.append(_CHROME.page_source)
+    content.append(_CHROME.find_element_by_xpath('.//body').text)
+    return content
 
 
 def construct_home_url(account_info):
@@ -58,57 +62,69 @@ def construct_message_url(account_info, offset=0):
 
 
 def get_all_messages(account_info):
+    url_list = []
     html_list = []
-    for i in range(1000):
+    text_list = []
+    for i in range(10):
         msg_url = construct_message_url(account_info, i)
         _CHROME.get(msg_url)
-        print(_CHROME.find_element_by_xpath('.//body').text)
-
-        read_page_content(msg_url)
-        
-
-
-def save_messages_to_csv(messages, account_json_path):
-    """ save messages into csv """
-    path, name = os.path.split(os.path.abspath(account_json_path))
-    output_csv = os.path.join(path, '{}.csv'.format(name.split('.')[0]))
-
-    with open(output_csv, 'w', encoding='utf-8') as outfile:
-        outfile.write('publish time, title, url\n')
-
-        for msg in messages:
-            # get message posting time
-            try:
-                pub_timestamp = msg.get('comm_msg_info').get('datetime')
-                pub_dt = str(datetime.utcfromtimestamp(pub_timestamp))
-
-                title = msg.get('app_msg_ext_info').get('title')
-                url = msg.get('app_msg_ext_info').get('content_url')
-
-                outfile.write('{}, {}, {}\n'.format(pub_dt, title, url))
-            except (KeyError, AttributeError) as e:
-                pass
+        # id = 1000000543 - i
+        # xpath = '//*[@id=\"WXAPPMSG' + str(id) + '\"]/div/h4' # //*[@id="WXAPPMSG1000000459"]/div/h4
+        # element = _CHROME.find_element_by_xpath(xpath)
+        # element = _CHROME.find_element_by_xpath('//*[@id="WXAPPMSG1000000543"]/div/h4') # The first day
+        element = _CHROME.find_elements_by_class_name('weui_media_title')
+        for j in range(3):
+            if "早读" in element[j].text:
+                page_url = element[j].get_attribute('hrefs')
+                if page_url not in url_list:
+                    url_list.append(page_url)
+                    content = read_page_content(page_url)
+                    html_list.append(content[0])
+                    text_list.append(content[1])
+                    print(content[0][:50])
+                    print(content[1][:50])
+                    print(i)
+                    print("-------------------")
+                    break
+        time.sleep(3)
+    newcontent = []
+    newcontent.append(html_list)
+    newcontent.append(text_list)
+    return newcontent
 
 
-def main(account_json):
+def save_messages_to_txt(newcontent, PATH):
+    """ save messages into txt """
+    i = 0
+    for html in newcontent[0]:
+        i = i + 1
+        path_html = os.path.join(PATH, str(i) + "_html.txt")
+        with open(path_html, "w", encoding='utf-8') as w:
+            w.write(html)
+    print("---Write html finished---")
+    i = 0
+    for text in newcontent[1]:
+        i = i + 1
+        path_text = os.path.join(PATH, str(i) + "_text.txt")
+        with open(path_text, "w", encoding='utf-8') as w:
+            w.write(text)
+    print("---Write text finished---")
+
+
+def main():
     # account_info = get_account_info(account_json)
+    PATH = "C:\\001\\"
     account_info = {
 	"__biz": "MjM5NzE0Mzg2OQ==",
 	"uin": "MjQ2MDQxNzc2MA%3D%3D",
-	"key": "7748b3d6c7704adc444c90f371dfdcf29ed90f65d91011c819df29c7ac49420b3afa3d377834a79890a48cd374da50cb8988e5782ccc79d115dbb368118bd67c4b673d76b52c231e94474ea145039130",
-	"pass_ticket": r"jiMEhLl0qnQvfW4pkmCCrGlOiwYI6uoP2EC8r7ALtFYOtTaRe67bDqROfipCQd%2Fg"}
+	"key": "d4a970180e8ca41f62acb7e361b945abc8da7f4a62371dd90437dd3c6f4e5297e883ed1df58771b90c8285ac824e2446a6d0c438fd21f70decb41a3befbcc40b8ef1b0948ec0e47f1b8f3ff7f8dd820b",
+	"pass_ticket": r"Dr%2BfmS5hPWEbrs51B%2FoI2mr%2B1kmNZpiSX6Hn6RHHP7yNyRy1Mi4ud4rj9YEv4%2BLQ"}
     home_url = construct_home_url(account_info)
     _CHROME.get(home_url)
-    html_list = get_all_messages(account_info)
-    print('{} messages collected'.format(len(messages)))
-    print('This is the most recent one:')
-    print(messages[0])
-
-    save_messages_to_csv(messages, account_json)
+    newcontent = get_all_messages(account_info)
+    save_messages_to_txt(newcontent, PATH)
 
 
 if __name__ == '__main__':
     import sys
-    # account_info = sys.argv[1]
-    # main(account_info)
-    main(None)
+    main()

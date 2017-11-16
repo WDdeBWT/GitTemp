@@ -8,7 +8,7 @@ import jieba
 import jieba.analyse
 import jieba.posseg as pseg
 import csv
-from textblob import TextBlob
+# from textblob import TextBlob
 
 
 def get_all_kw(read_path, write_path):
@@ -53,7 +53,7 @@ def get_all_kw(read_path, write_path):
                 w.write(row + "\n")
 
 
-def get_csv_c(read_path, write_path):
+def get_csv_c(read_path, write_path, StopPath):
     rows = []
     dict_row = {}
     year = ""
@@ -66,7 +66,7 @@ def get_csv_c(read_path, write_path):
         with open(file_name, 'r', encoding="utf-8") as r:
             print(file_name)
             for line in r.readlines():
-                print(line)
+                # print(line)
                 if line.startswith("Title-题名:  "):
                     ti = line[11:]
                     continue
@@ -128,13 +128,15 @@ def get_csv_c(read_path, write_path):
 read_path_e = "F:\\Files\\JAR\\Journal_of_accounting_research.txt"
 write_path_e = "F:\\Files\\JAR\\KW_new.txt"
 
-StopPath = "F:\\Files\\stopWordC.txt"
+StopPathH = "H:\\HE\\stopWordH.txt"
 
-read_path_c = "F:\\Files\\管理科学学报_原始数据\\"
-write_path_c = "F:\\Files\\管理科学学报_初步处理\\"
+StopPathB = "D:\\code\\GitTemp\\stopWordC.txt"
 
-read_path_ch = "K:\\Ori_Chinese\\"
-write_path_ch = "K:\\Ori_Chinese_out\\"
+read_path_ch = "H:\\HE\\Ori_Chinese\\"
+write_path_ch = "H:\\HE\\New_Chinese\\"
+
+read_path_cb = "D:\\管理科学学报_原始数据\\"
+write_path_cb = "D:\\管理科学学报_初步处理\\"
 
 # get_all_kw(read_path_e, write_path_e)
-get_csv_c(read_path_c, write_path_c)
+get_csv_c(read_path_ch, write_path_ch, StopPathH)

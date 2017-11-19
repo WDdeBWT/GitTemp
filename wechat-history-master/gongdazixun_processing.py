@@ -30,6 +30,9 @@ def get_csv_c(read_path, write_path):
                         news_time = str(re.search(r'\d{4}-\d{2}-\d{2}', line).group(0))[:7] # 取出时间字符串的前7位（年-月）
                         news_time = news_time[:4] + news_time[5:]
                         news_time = news_time[2:]
+                        x = news_time[:2]
+                        y = news_time[2:]
+                        news_time = str( (int(x)-15)*12 + int(y) + 1950 )
                         time_flag = 1
                     if ("国   际" in line) or ("【国际要闻】" in line):
                         dict_row = {'TIME': news_time, 'TEXT': text}
@@ -75,7 +78,7 @@ def get_csv_c(read_path, write_path):
     print("----------FINISH----------")
 
 
-StopPath = "F:\\Files\\stopWordC.txt"
+StopPath = "F:\\Files\\stopWordG.txt"
 
 read_path_c = "F:\\Files\\公大资讯历史记录1000_原始数据\\"
 write_path_c = "F:\\Files\\公大资讯历史记录1000_初步处理\\"

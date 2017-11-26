@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "data_structure_predefined.h": "c",
+        "stdio.h": "c"
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Disabled"
+}

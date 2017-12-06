@@ -115,10 +115,10 @@ def main():
     # account_info = get_account_info(account_json)
     PATH = "C:\\001\\"
     account_info = {
-	"__biz": "MjM5NzE0Mzg2OQ==",
+	"__biz": "MTg1MjI3MzY2MQ==",
 	"uin": "MjQ2MDQxNzc2MA%3D%3D",
-	"key": "d4a970180e8ca41f62acb7e361b945abc8da7f4a62371dd90437dd3c6f4e5297e883ed1df58771b90c8285ac824e2446a6d0c438fd21f70decb41a3befbcc40b8ef1b0948ec0e47f1b8f3ff7f8dd820b",
-	"pass_ticket": r"Dr%2BfmS5hPWEbrs51B%2FoI2mr%2B1kmNZpiSX6Hn6RHHP7yNyRy1Mi4ud4rj9YEv4%2BLQ"}
+	"key": "4f44f0a7d9d02374fc2ebc3a11307b9bcb1e241dd9a4e967deb4677e12a4d1f451d790f112f965e86902a327aee4055fc6164d6c71566d580fb059cfc5d2f20c1cfd225ea6d33be6c6c85bf56fa9b8b6",
+	"pass_ticket": r"n93rx30W7yFA%2Bh%2BEb2IGUz1bXv%2FZADrBYbnmpwSiDYhnsPUFaIrSGVDFX4EPwlGD"}
     home_url = construct_home_url(account_info)
     _CHROME.get(home_url)
     newcontent = get_all_messages(account_info)

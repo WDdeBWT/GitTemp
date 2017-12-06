@@ -1,17 +1,20 @@
-# -*- coding:utf-8 -*-
+# _*_ coding:utf-8 _*_
+__author__ = "WDdeBWT"
+__date__ = "2017/12/06"
+
 import time
 
 from lxml import etree
 
+import os
 import re
 import sys
+import csv
+import urllib
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import TimeoutException
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-
-from tools import Tools
-from entitys import Person, Weibo
 
 
 class SpiderWeibo:
@@ -20,6 +23,7 @@ class SpiderWeibo:
         self.username = '15071306953'
         self.userpass = '19971027'
         self.url_login = 'https://passport.weibo.cn/signin/login'
+        self.file_path = "F:\\Files\\weibo_taobaibai"
 
     def login_weibo(self):
         self.browser.get(self.url_login)
@@ -31,14 +35,67 @@ class SpiderWeibo:
         elem_user.send_keys(self.username)
         elem_pass.send_keys(self.userpass)
 
-        time.sleep(5)
+        time.sleep(2)
 
         elem_pass.send_keys(Keys.RETURN)
         time.sleep(8)
 
-        print("-------------------login success------------------")
+        print("--------------------login success--------------------")
 
-    def Get
+
+    def get_main_ifmt(self):
+        pages = 2
+        weibo_id = 0
+        try:
+            for i in range(pages):
+                url_index = 'https://weibo.cn/u/6003325152?filter=1'
+                url_index = url_index + "&page=" + str(i+1)
+                print("--------------------page:" + str(i+1) + "--------------------")
+                print(url_index)
+
+                # collect the weibo in this page
+                self.browser.get(url_index)
+                time.sleep(1)
+                soup = BeautifulSoup(self.browser.page_source, "html.parser")
+
+                results = soup.find_all("div", class_="c")
+                for result in results:
+                    if not result.find_all("span", class_="ctt"):
+                        continue
+                    # search the content
+                    weibo_id += 1
+                    content = result.find_all("span", class_="ctt")[0]
+                    all_a = result.find_all("a")
+                    # get url_img and url_cmt
+                    for one_a in all_a:
+                        if "原图" in one_a.text:
+                            self.get_img(weibo_id, one_a["href"])
+                        if "评论" in one_a.text:
+                            url_cmt = one_a["href"]
+                            cmt = self.get_all_cmt(weibo_id, url_cmt)
+                    print(content.text)
+                    # temp
+                    time.sleep(1)
+        except Exception as e:
+            print(e)
+
+    def get_img(self, weibo_id, img_url):
+        print("img_url:" + img_url)
+        self.browser.get(img_url)
+        time.sleep(3)
+        soup = BeautifulSoup(self.browser.page_source, "html.parser")
+        img_src = soup.find_all("img")[0]["src"]
+        ext = img_src.split('.')[-1]
+        save_path = os.path.join(self.file_path, str(weibo_id) + "." + ext)
+        #保存图片数据
+        data = urllib.request.urlopen(img_src).read()
+        f = open(save_path, 'wb')
+        f.write(data)
+        f.close()
+    
+    def get_all_cmt(self, weibo_id, cmt_url):
+        print("cmt_url:" + cmt_url)
+        return 0
 
     def spide_base_message(self, url):
         # url_fanbb = 'https://weibo.cn/fbb0916'
@@ -175,4 +232,4 @@ spider = SpiderWeibo()
 spider.login_weibo()
 #spider.spide_base_message()
 #spider.spide_weibo_messge()
-spider.get_bigman_fans("test01.txt")
+spider.get_main_ifmt()

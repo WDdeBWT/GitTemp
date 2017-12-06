@@ -28,7 +28,7 @@ class SpiderWeibo:
     def login_weibo(self):
         self.browser.get(self.url_login)
 
-        time.sleep(2)
+        time.sleep(3)
         elem_user = self.browser.find_element_by_id('loginName')
         elem_pass = self.browser.find_element_by_id('loginPassword')
 
@@ -44,8 +44,8 @@ class SpiderWeibo:
 
 
     def get_main_ifmt(self):
-        pages = 2
-        weibo_id = 0
+        pages = 52
+        weibo_id = 1
         try:
             for i in range(pages):
                 url_index = 'https://weibo.cn/u/6003325152?filter=1'
@@ -55,43 +55,87 @@ class SpiderWeibo:
 
                 # collect the weibo in this page
                 self.browser.get(url_index)
-                time.sleep(1)
+                time.sleep(3)
                 soup = BeautifulSoup(self.browser.page_source, "html.parser")
 
                 results = soup.find_all("div", class_="c")
+                if not results:
+                    continue
                 for result in results:
-                    if not result.find_all("span", class_="ctt"):
-                        continue
-                    # search the content
-                    weibo_id += 1
-                    content = result.find_all("span", class_="ctt")[0]
-                    all_a = result.find_all("a")
-                    # get url_img and url_cmt
-                    for one_a in all_a:
-                        if "原图" in one_a.text:
-                            self.get_img(weibo_id, one_a["href"])
-                        if "评论" in one_a.text:
-                            url_cmt = one_a["href"]
-                            cmt = self.get_all_cmt(weibo_id, url_cmt)
-                    print(content.text)
-                    # temp
-                    time.sleep(1)
+                    try:
+                        if not result.find_all("span", class_="ctt"):
+                            continue
+                        # search the content
+                        weibo_id += 1
+                        print("--------------------weibo_id:" + str(weibo_id) + "--------------------")
+                        content = result.find_all("span", class_="ctt")[0]
+                        all_a = result.find_all("a")
+                        # get url_img and url_cmt
+                        flag = 0
+                        for one_a in all_a:
+                            if "组图" in one_a.text:
+                                flag = 1
+                                self.get_all_img(weibo_id, one_a["href"])
+                            if "原图" in one_a.text:
+                                if flag == 1:
+                                    continue
+                                self.get_one_img(weibo_id, one_a["href"])
+                            if "评论" in one_a.text:
+                                url_cmt = one_a["href"]
+                                cmt = self.get_all_cmt(weibo_id, url_cmt)
+                        save_path = os.path.join(self.file_path, "content")
+                        save_path = os.path.join(save_path, str(weibo_id) + "_ctt.txt")
+                        print(content.text)
+                        f = open(save_path, 'w', encoding='utf-8')
+                        f.write(content.text)
+                        f.close()
+                        # temp sleep
+                        # time.sleep(1)
+                    except Exception as e:
+                        print(e)
         except Exception as e:
             print(e)
+        print("--------------------运行结束，当前时间：" + str(time.strftime('%Y-%m-%d',time.localtime(time.time()))) + "--------------------")
 
-    def get_img(self, weibo_id, img_url):
+    def get_one_img(self, weibo_id, img_url):
         print("img_url:" + img_url)
         self.browser.get(img_url)
         time.sleep(3)
         soup = BeautifulSoup(self.browser.page_source, "html.parser")
         img_src = soup.find_all("img")[0]["src"]
         ext = img_src.split('.')[-1]
-        save_path = os.path.join(self.file_path, str(weibo_id) + "." + ext)
+        save_path = os.path.join(self.file_path, "image")
+        save_path = os.path.join(save_path, str(weibo_id) + "_oig." + ext)
         #保存图片数据
         data = urllib.request.urlopen(img_src).read()
         f = open(save_path, 'wb')
         f.write(data)
         f.close()
+
+    def get_all_img(self, weibo_id, img_url):
+        print("img_url:" + img_url)
+        self.browser.get(img_url)
+        time.sleep(3)
+        soup = BeautifulSoup(self.browser.page_source, "html.parser")
+        all_img_a = soup.find_all("a")
+        i = 0
+        for img_a in all_img_a:
+            if "原图" in img_a.text:
+                i += 1
+                self.browser.get("http://weibo.cn" + img_a["href"])
+                time.sleep(3)
+                newsoup = BeautifulSoup(self.browser.page_source, "html.parser")
+                img_src = newsoup.find_all("img")[0]["src"]
+                ext = img_src.split('.')[-1]
+                save_path = os.path.join(self.file_path, "image")
+                save_path = os.path.join(save_path, str(weibo_id) + "_aig_" + str(i) + "." + ext)
+                #保存图片数据
+                data = urllib.request.urlopen(img_src).read()
+                f = open(save_path, 'wb')
+                f.write(data)
+                f.close()
+
+
     
     def get_all_cmt(self, weibo_id, cmt_url):
         print("cmt_url:" + cmt_url)

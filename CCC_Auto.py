@@ -64,6 +64,6 @@ class ChromeDriver:
 
 spider = ChromeDriver()
 spider.login_index()
-for i in range(10):
+for i in range(50):
     spider.auto_click()
 print("----------")

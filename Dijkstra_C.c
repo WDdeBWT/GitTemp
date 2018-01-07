@@ -155,23 +155,23 @@ int requestInspect(int *available, int *max, int *allocation, int *need, int *re
 
 int getSolution(int *available, int *max, int *allocation, int *need, int *request, int *secured_sequence, int p_num, int r_num)
 {
-    int i, j, m;
-    int flag;
+    int i, j, m;//循环变量，无实际意义
+    int flag;//标识符，标识对应线程是否能安全完成
 
-    int *finish = (int *)calloc(p_num, sizeof(int));
+    int *finish = (int *)calloc(p_num, sizeof(int));//进程完成指示向量，finish[x]的bool值代表第x个进程是否完成
 
-    int *work = (int *)calloc(r_num, sizeof(int));
-    int *allo = (int *)calloc(p_num*r_num, sizeof(int));
-    int *ned = (int *)calloc(p_num*r_num, sizeof(int));
+    int *work = (int *)calloc(r_num, sizeof(int));//当前可用资源向量（实时变化，初始值等于available）
+    int *allo = (int *)calloc(p_num*r_num, sizeof(int));//当前各进程占用资源矩阵（实时变化，初始值等于allocation）
+    int *ned = (int *)calloc(p_num*r_num, sizeof(int));//当前各进程需求资源矩阵（实时变化，初始值等于need）
 
-    for (j=0; j<p_num; j++)
+    for (j=0; j<p_num; j++)//开始寻找安全序列前，将安全序列置为-1
     {
     	secured_sequence[j] = -1;
     }
 
-        copyIntPointer(available, work, r_num);
-    copyIntPointer(allocation, allo, p_num*r_num);
-    copyIntPointer(need, ned, p_num*r_num);
+    copyIntPointer(available, work, r_num);//设置word初始值
+    copyIntPointer(allocation, allo, p_num*r_num);//设置allo初始值
+    copyIntPointer(need, ned, p_num*r_num);//设置ned初始值
 
     for (i = 0; i<r_num; i++)//预分配，计算这次资源请求后，系统资源情况
     {
@@ -179,31 +179,31 @@ int getSolution(int *available, int *max, int *allocation, int *need, int *reque
         allo[request[r_num] * r_num + i] = allo[request[r_num] * r_num + i] + request[i];
         ned[request[r_num] * r_num + i] = ned[request[r_num] * r_num + i] - request[i];
     }
-    //while (secured_sequence[p_num-1] == 0)
-    for (m = 0; m<p_num; m++)
+    //开始寻找安全序列
+    for (m = 0; m<p_num; m++)//循环p_num次，每次循环寻找一条可以安全完成的进程
     {
-        for (j = 0; j<p_num; j++)
+        for (j = 0; j<p_num; j++)//循环p_num次，每次循环判断第j条进程是否可以安全完成，若可以完成，则插插入安全序列并释放资源
         {
-            flag = 1;
+            flag = 1;//先假设这条进程能够安全完成
             if (finish[j] == 0)
             {
                 for (i = 0; i<r_num; i++)
                 {
                     if (ned[j*r_num + i] > work[i])
                     {
-                        flag = 0;
+                        flag = 0;//这条线程所需的资源超过了现有资源（work），不能安全完成
                         break;
                     }
                 }
-                if (flag == 1)
+                if (flag == 1)//经过了上面的for循环，flag仍为1，则意味着这条线程所需的所有资源都在现有（work）范围内，则插入安全序列并释放资源
                 {
-                    secured_sequence[m] = j;
+                    secured_sequence[m] = j;//插入安全序列
                     for (i = 0; i<r_num; i++)//释放进程J所占有的资源
                     {
                         work[i] = work[i] + allo[j * r_num + i];
                     }
-                    finish[j] = 1;
-                    break;
+                    finish[j] = 1;//将第j条进程置为已完成
+                    break;//跳出for j循环，即已找到第m个可以完成的进程
                 }
                 else
                 {
@@ -215,7 +215,7 @@ int getSolution(int *available, int *max, int *allocation, int *need, int *reque
                 continue;
             }
         }
-        if (secured_sequence[m] == -1)
+        if (secured_sequence[m] == -1)//如果安全序列成功找到，那么安全序列的最后一个值就会是最后完成的进程号。反之，若为-1，则代表未找到
         {
             return 0;//无法找到安全序列，返回false
         }

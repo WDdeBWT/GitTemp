@@ -79,7 +79,7 @@ class CsvProcesser:
             temp = int(result[0])
             for ctt in ctt_list:
                 if (ctt[0] + 2) == temp:
-                    falg = 1
+                    flag = 1
                     # ID, weibo content, img content, comment count, like count
                     result_list.append((result[0], result[1], ctt[1], result[6], result[7]))
                     break
@@ -135,6 +135,7 @@ class WordProcesser:
 
     
     def get_word_stop(self):
+        i = 0
         temp = ""
         all_words = []
         list1 = [] #block list after jieba
@@ -146,18 +147,24 @@ class WordProcesser:
             stopwords.append(word)
         for line in content_list:
             list1 = []
+            i = 0
             for block in line:
+                if i in [0, 3, 4]:
+                    list1.append(str(block))
+                    i += 1
+                    continue
                 temp = ""
                 words = pseg.cut(block)
                 for word, flag in words:
-                    if flag in ('n', 'ns', 'nt', 'nz', 'an', 'vn', 'un'):
+                    if flag in ('a', 'n', 'ns', 'nt', 'nz', 'an', 'vn', 'un', 'nr', 'i', 'v', 'nt', 'zg', 'l', 'r'):
                         if word not in stopwords:
                             print(word)
-                            temp += word
-                            all_words.append((word, ""))
+                            temp = temp + ", " + word
+                            all_words.append((word, flag))
                 list1.append(temp)
+                i += 1
             list2.append(list1)
-        self.write_csv(all_words, self.write_path_2)
+        self.write_csv(list2, self.write_path_2)
     
     def write_csv(self, result_list, write_path):
         with open(write_path, 'w', newline="") as w:
@@ -167,7 +174,7 @@ class WordProcesser:
             print("Finish")
 
 
+
 wp = WordProcesser()
-wp.get_word()
 wp.get_word_stop()
 

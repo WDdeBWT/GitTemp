@@ -56,7 +56,7 @@ class FindExtremum:
                         temp = int(line_q[i][6])
                 line_q.pop(0)
                 line_q.append(line)
-                if int(line[6]) > (3*sum_comment/5):
+                if int(line[6]) > (3*sum_comment/5) and int(line[6]) > (2*temp):
                     line_list.append(line)
                     print(line[0])
         self.cprcs.write_csv(line_list, self.write_path)

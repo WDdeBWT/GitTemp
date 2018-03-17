@@ -19,7 +19,7 @@ class Test1Spider(RedisSpider):
 
     def parse(self, response):
         self.times += 1
-        fname = "D:\\code\\file\\" + str(self.times) + ".html"
+        fname = "F:\\Files\\scrapy_test1\\" + str(self.times) + ".html"
         with open(fname, 'wb') as w:
             w.write(response.body)
         soup = BeautifulSoup(response.body, "html.parser")

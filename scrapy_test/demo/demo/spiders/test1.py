@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from scrapy_redis.spiders import RedisSpider
 from bs4 import BeautifulSoup
 
 
-class Test1Spider(scrapy.Spider):
+class Test1Spider(RedisSpider):
     name = 'test1'
-    start_urls = [r'https://www.baidu.com/s?ie=UTF-8&wd=%E5%9E%83%E5%9C%BE%E7%84%9A%E7%83%A7']
+    redis_key = "sinaspider:start_urls"
 
     def __init__(self):
         self.times = 0
+    
+    # def __init__(self, *args, **kwargs):
+    #     domain = kwargs.pop('domain', '')
+    #     self.allowed_domains = filter(None, domain.split(','))
+    #     super(Test1Spider, self).__init__(*args, **kwargs)
+    #     self.times = 0
 
     def parse(self, response):
         self.times += 1

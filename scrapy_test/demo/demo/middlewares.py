@@ -27,7 +27,6 @@ class SeleniumMiddleware():
         self.wait = WebDriverWait(self.browser, self.timeout)
 
     def __del__(self):
-        time.sleep(2)
         self.browser.close()
 
     def process_request(self, request, spider):

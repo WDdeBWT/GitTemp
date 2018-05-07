@@ -27,8 +27,7 @@ class AccountHandler(tornado.web.RequestHandler):
         # verify account
         user_name = self.get_argument('user_name', '')
         password = self.get_argument('password', '')
-        user_type = self.get_argument('user_type', '')
-        return_message = account_tools.verify_account(user_name, password, user_type)
+        return_message = account_tools.verify_account(user_name, password)
         if return_message:
             self.write(json.dumps(return_message))
             return

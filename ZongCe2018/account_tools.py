@@ -8,13 +8,13 @@ import openpyxl
 
 import database_model
 
-def verify_account(user_name = '', password = '', user_type = ''):
+def verify_account(user_name = '', password = ''):
     al_tb = database_model.tb_AccountList()
     al_tb.open_conn()
     al_list = al_tb.select_data()
     al_tb.close()
     for al in al_list:
-        if (user_name == al[0].strip()) and (password == al[1].strip()) and (user_type == al[2].strip()):
+        if (user_name == al[0].strip()) and (password == al[1].strip()):
             return al[3].strip()
     return False
 

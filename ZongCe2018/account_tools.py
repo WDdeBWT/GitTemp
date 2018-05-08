@@ -18,13 +18,13 @@ def verify_account(user_name = '', password = ''):
             return al[3].strip()
     return False
 
-def update_password(user_name, old_password, new_password, user_type):
+def update_password(user_name, old_password, new_password):
     flag = False
-    al_tb = database_model.tb_AccountList(user_name, new_password, user_type)
+    al_tb = database_model.tb_AccountList(user_name, new_password)
     al_tb.open_conn()
     al_list = al_tb.select_data()
     for al in al_list:
-        if (user_name == al[0].strip()) and (old_password == al[1].strip()) and (user_type == al[2].strip()):
+        if (user_name == al[0].strip()) and (old_password == al[1].strip()):
             flag = True
     if flag == True:
         if al_tb.update_data():
@@ -33,9 +33,9 @@ def update_password(user_name, old_password, new_password, user_type):
     al_tb.close()
     return False
 
-def create_account(user_name, password, user_type, real_name = ''):
+def create_account(user_name, password, user_role, real_name = '', class_code = ''):
     flag = False
-    al_tb = database_model.tb_AccountList(user_name, password, user_type, real_name)
+    al_tb = database_model.tb_AccountList(user_name, password, user_role, real_name, class_code)
     al_tb.open_conn()
     al_list = al_tb.select_data()
     for al in al_list:
@@ -104,9 +104,25 @@ def batch_import_users(file_path):
         accountList.password = '666666'
         accountList.user_role = item[1]
         accountList.real_name = item[2]
+        accountList.class_code = item[3]
         accountList.insert_data()
         time.sleep(0.05)
     accountList.close()
-        
+
+
+def show_account():
+    show_list = []
+    al_tb = database_model.tb_AccountList()
+    al_tb.open_conn()
+    al_list = al_tb.select_data()
+    al_tb.close()
+    al_list.sort(key=lambda k: (k[0]))
+    for al in al_list:
+        if al[0] in ['1101', '1102']:
+            continue
+        show_list.append((al[0], al[2], al[3]))
+    return show_list
+
 if __name__=='__main__':
-    batch_import_users(r'C:\Users\baiwt\Desktop\评委小组账户.xlsx')
+    # batch_import_users(r'C:\Users\baiwt\Desktop\评委小组账户.xlsx')
+    print(show_account())

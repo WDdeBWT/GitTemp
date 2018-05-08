@@ -21,11 +21,12 @@ def freeExecute(sql_str, is_select):
 
 
 class tb_AccountList:
-    def __init__(self, user_name = '', password = '', user_role = '',real_name=''):
+    def __init__(self, user_name = '', password = '', user_role = '', real_name = '', class_code = ''):
         self.user_name = user_name
         self.password = password
         self.user_role = user_role
         self.real_name = real_name
+        self.class_code = class_code
         self.ms_sql = None
     
     def open_conn(self):
@@ -35,7 +36,7 @@ class tb_AccountList:
         self.ms_sql.close_connection()
     
     def insert_data(self):
-        sql = "INSERT INTO accountList VALUES('" + str(self.user_name) + "', '" + str(self.password) + "', '" + str(self.user_role) +"','"+ str(self.real_name) + "')"
+        sql = "INSERT INTO accountList VALUES('" + str(self.user_name) + "', '" + str(self.password) + "', '" + str(self.user_role) + "','" + str(self.real_name) + "','" + str(self.class_code) + "')"
         if self.ms_sql.ExecNonQuery(sql):
             return True
         else:

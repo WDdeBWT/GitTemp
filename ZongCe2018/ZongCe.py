@@ -38,47 +38,20 @@ class AccountHandler(tornado.web.RequestHandler):
 
     def post(self):
         data=json_decode(self.request.body)
-
-        if data['user_type'] == 'student':
-            if not account_tools.verify_account(data['user_name'], data['password'], data['user_type']):
-                self.write(json.dumps('disallow')) #如果密码错误，返回禁止访问信息
-                return
-
-            if data['option_type'] == 'update_password':
-                if account_tools.update_password(data['user_name'], data['password'], data['the_password'], data['user_type']):
-                    self.write(json.dumps('True'))
-                    return
-                else:
-                    self.write(json.dumps('Error: AccountManagementHandler POST update_password'))
-                    return
-            self.write(json.dumps('Error: AccountManagementHandler POST student'))
+        if not account_tools.verify_account(data['user_name'], data['password']):
+            self.write(json.dumps('disallow')) #如果密码错误，返回禁止访问信息
             return
 
-        elif data['user_type'] == 'admin':
-            if not account_tools.verify_account(data['user_name'], data['password'], 'admin'):
-                self.write(json.dumps('disallow')) #如果密码错误，返回禁止访问信息
+        if data['option_type'] == 'update_password':
+            if account_tools.update_password(data['user_name'], data['password'], data['the_password']):
+                self.write(json.dumps('True'))
                 return
+            else:
+                self.write(json.dumps('Error: AccountHandler POST update_password'))
+                return
+        self.write(json.dumps('Error: AccountHandler POST'))
+        return
 
-            if data['option_type'] == 'update_password':
-                if account_tools.update_password(data['user_name'], data['password'], data['the_password'], data['user_type']):
-                    self.write(json.dumps('True'))
-                    return
-                else:
-                    self.write(json.dumps('Error: AccountManagementHandler POST update_password'))
-                    return
-            elif data['option_type'] == 'create_account':
-                self.write(json.dumps(account_tools.create_account(data['the_user_name'], data['the_password'], data['the_user_type'], data['the_real_name'])))
-                return
-            elif data['option_type'] == 'delete_account':
-                self.write(json.dumps(account_tools.delete_account(data['the_user_name'])))
-                return
-            elif data['option_type'] == 'init_password':
-                self.write(json.dumps(account_tools.init_password(data['the_user_name'])))
-                return
-        else:
-            self.write(json.dumps('Error: Unknown user_type'))
-            return
-    
     def options(self):
         # no body
         self.set_status(204)
@@ -108,6 +81,27 @@ class ManagementHandler(tornado.web.RequestHandler):
         self.finish()
 
 
+class ShowAccountHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    def get(self):
+        show_list = account_tools.show_account()
+        self.write(json.dumps(show_list))
+        return
+
+    def post(self):
+        self.write("Hello world - POST")
+        return
+
+    def options(self):
+        # no body
+        self.set_status(204)
+        self.finish()
+
+
 class AjaxHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
@@ -121,7 +115,7 @@ class AjaxHandler(tornado.web.RequestHandler):
     def post(self):
         self.write("Hello world - POST")
         return
-    
+
     def options(self):
         # no body
         self.set_status(204)
@@ -135,7 +129,8 @@ application = tornado.web.Application([
     (r"/", MainHandler),
     (r"/ajax_test", AjaxHandler),
     (r"/ajax_account", AccountHandler),
-    (r"/ajax_management", ManagementHandler)
+    (r"/ajax_management", ManagementHandler),
+    (r"/ajax_showaccount", ShowAccountHandler)
     ],**settings)
 
 if __name__ == '__main__':

@@ -62,3 +62,37 @@ class tb_AccountList:
         else:
             print("---------- tb_AccountList 更新到数据库失败 ----------")
             return False
+
+
+class tb_StudentList:
+    def __init__(self, student_id = '', student_name = '', class_code = ''):
+        self.student_id = student_id
+        self.student_name = student_name
+        self.class_code = class_code
+        self.ms_sql = None
+    
+    def open_conn(self):
+        self.ms_sql = MSSQL()
+
+    def close(self):
+        self.ms_sql.close_connection()
+    
+    def insert_data(self):
+        sql = "INSERT INTO studentList VALUES('" + str(self.student_id) + "', '" + str(self.student_name) + "','" + str(self.class_code) + "')"
+        if self.ms_sql.ExecNonQuery(sql):
+            return True
+        else:
+            print("---------- tb_StudentList 保存到数据库失败 ----------")
+            return False
+
+    def delete_data(self):
+        sql = "DELETE FROM studentList WHERE student_id = '" + self.student_id + "'"
+        if self.ms_sql.ExecNonQuery(sql):
+            return True
+        else:
+            print("---------- tb_StudentList 删除到数据库失败 ----------")
+            return False 
+
+    def select_data(self):
+        sql = "SELECT * FROM studentList"
+        return self.ms_sql.ExecQuery(sql)

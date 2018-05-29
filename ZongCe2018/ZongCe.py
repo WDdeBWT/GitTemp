@@ -11,6 +11,7 @@ import tornado.options
 from tornado.escape import json_decode
 
 import account_tools
+import student_tools
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -58,7 +59,7 @@ class AccountHandler(tornado.web.RequestHandler):
         self.finish()
 
 
-class ManagementHandler(tornado.web.RequestHandler):
+class ManagementAccountHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
@@ -81,6 +82,29 @@ class ManagementHandler(tornado.web.RequestHandler):
         self.finish()
 
 
+class ManagementStudentHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    def get(self):
+        self.write("Hello world - GET")
+        return
+
+    def post(self):
+        file_path = 'temp.xlsx'
+        with open(file_path, 'wb') as up:
+            up.write(self.request.body)
+        student_tools.batch_import_student(file_path)
+        return
+    
+    def options(self):
+        # no body
+        self.set_status(204)
+        self.finish()
+
+
 class ShowAccountHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
@@ -95,6 +119,40 @@ class ShowAccountHandler(tornado.web.RequestHandler):
     def post(self):
         self.write("Hello world - POST")
         return
+
+    def options(self):
+        # no body
+        self.set_status(204)
+        self.finish()
+
+
+class JudgeHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    def get(self):
+        self.write("Hello world - GET")
+        return
+
+    def post(self):
+        data=json_decode(self.request.body)
+        # verify account
+        if not account_tools.verify_account(data['user_name'], data['password']):
+            self.write(json.dumps('disallow')) #如果密码错误，返回禁止访问信息
+            return
+        
+        if data['option_type'] == 'get_student_list':
+            student_tools.get_student_list()
+            pass
+        elif data['option_type'] == 'set_score':
+            student_tools.set_score()
+            self.write(json.dumps('True'))
+            return
+        elif data['option_type'] == 'get_score':
+            student_tools.export_score_by_class()
+            pass
 
     def options(self):
         # no body
@@ -129,8 +187,9 @@ application = tornado.web.Application([
     (r"/", MainHandler),
     (r"/ajax_test", AjaxHandler),
     (r"/ajax_account", AccountHandler),
-    (r"/ajax_management", ManagementHandler),
-    (r"/ajax_showaccount", ShowAccountHandler)
+    (r"/ajax_management_account", ManagementAccountHandler),
+    (r"/ajax_management_student", ManagementStudentHandler),
+    (r"/ajax_show_account", ShowAccountHandler)
     ],**settings)
 
 if __name__ == '__main__':

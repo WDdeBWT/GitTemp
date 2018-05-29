@@ -27,3 +27,12 @@ def batch_import_student(file_path):
         student_list.insert_data()
         time.sleep(0.05)
     student_list.close()
+
+def get_student_list():
+    pass
+
+def set_score():
+    pass
+
+def export_score_by_class():
+    pass

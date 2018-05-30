@@ -96,3 +96,43 @@ class tb_StudentList:
     def select_data(self):
         sql = "SELECT * FROM studentList"
         return self.ms_sql.ExecQuery(sql)
+    
+    def select_data_by_classcode(self):
+        sql = "SELECT * FROM studentList WHERE class_code = '" + str(self.class_code) + "'"
+        return self.ms_sql.ExecQuery(sql)
+
+
+class tb_ScoreList:
+    def __init__(self, student_id = '', eva_id = '', s1 = '', s2 = '', s3 = '', s4 = '', s5 = '', s6 = '', eva_time = ''):
+        self.student_id = student_id
+        self.eva_id = eva_id
+        self.s1 = s1
+        self.s2 = s2
+        self.s3 = s3
+        self.s4 = s4
+        self.s5 = s5
+        self.s6 = s6
+        self.eva_time = eva_time
+        self.ms_sql = None
+    
+    def open_conn(self):
+        self.ms_sql = MSSQL()
+
+    def close(self):
+        self.ms_sql.close_connection()
+    
+    def insert_data(self):
+        sql = "INSERT INTO scoreList VALUES('" + str(self.student_id) + "', '" + str(self.eva_id) + "', " + str(self.s1) + ", " + str(self.s2) + ", " + str(self.s3) + ", " + str(self.s4) + ", " + str(self.s5) + ", " + str(self.s6) + ", '" + str(self.eva_time) + "')"
+        if self.ms_sql.ExecNonQuery(sql):
+            return True
+        else:
+            print("---------- tb_ScoreList 保存到数据库失败 ----------")
+            return False
+
+    def select_data(self):
+        sql = "SELECT * FROM scoreList"
+        return self.ms_sql.ExecQuery(sql)
+    
+    def select_data_by_evaid(self):
+        sql = "SELECT * FROM scoreList WHERE eva_id = '" + str(self.eva_id) + "'"
+        return self.ms_sql.ExecQuery(sql)

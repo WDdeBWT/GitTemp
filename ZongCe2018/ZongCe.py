@@ -144,14 +144,14 @@ class JudgeHandler(tornado.web.RequestHandler):
             return
         
         if data['option_type'] == 'get_student_list':
-            student_tools.get_student_list()
+            student_tools.get_student_list(data['user_name'], data['class_code'])
             pass
         elif data['option_type'] == 'set_score':
-            student_tools.set_score()
+            student_tools.set_score(data['the_student_id'], data['user_name'], data['score_list'])
             self.write(json.dumps('True'))
             return
         elif data['option_type'] == 'get_score':
-            student_tools.export_score_by_class()
+            student_tools.export_score_by_class(data['class_code'])
             pass
 
     def options(self):

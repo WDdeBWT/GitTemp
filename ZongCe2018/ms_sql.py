@@ -2,9 +2,10 @@
 # @__Author__ = "WDdeBWT"
 # @__Date__ : "2018/05/07"
 
-import pymssql
-
+import csv
 import time
+
+import pymssql
 
 
 class MSSQL:
@@ -21,7 +22,27 @@ class MSSQL:
         得到连接信息
         返回: conn.cursor()
         """
-        self.conn = pymssql.connect(host='119.23.239.27', user='WeiboSpiderUser', password='weibospideruser', database='ZongCe2018', charset="utf8")
+
+                # 配置信息
+        # imf_path = r'C:\Baiwt\Files\mssql_account.csv' # XPS13
+        imf_path = r'C:\Files\mssql_account.csv' # Aliyun_Bai
+        db_host = '119.23.239.27'
+        db_user = 'WeiboSpiderUser'
+        db_password = ''
+        db_database = 'ZongCe2018'
+        db_charset = "utf8"
+
+        # 打开 mssql_account.csv
+        act_list = []
+        with open(imf_path) as f:
+            reader = csv.reader(f)
+            act_list = list(reader)
+        for act in act_list:
+            if act[0].strip() == db_user.strip():
+                db_password = act[1].strip()
+                break
+
+        self.conn = pymssql.connect(host=db_host, user=db_user, password=db_password, database=db_database, charset=db_charset)
         # self.conn=pymssql.connect(host='.',database='WeiboSpiderDB', charset="utf8")
         self.cur = self.conn.cursor()
         if self.cur:

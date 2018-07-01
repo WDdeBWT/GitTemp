@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Move 2 elements to &apos;castleTest/src/castleTest&apos;&#x0D;&#x0A;- Original project: &apos;castle&apos;&#x0D;&#x0A;- Destination element: &apos;castleTest/src/castleTest&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     Game.java&#x0D;&#x0A;     Room.java&#x0D;&#x0A;- Update references to refactored element" description="Move files" destination="=castleTest/src&lt;castleTest" element1="src/castle/Game.java" element2="src/castle/Room.java" files="2" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1485343339186" units="0" version="1.0"/>
-</session>

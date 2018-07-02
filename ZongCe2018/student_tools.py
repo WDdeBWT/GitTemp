@@ -8,6 +8,7 @@ import datetime
 import openpyxl
 
 import database_model
+import account_tools
 
 def batch_import_student(file_path):
     wb=openpyxl.load_workbook(file_path)
@@ -29,11 +30,11 @@ def batch_import_student(file_path):
         time.sleep(0.05)
     student_list.close()
 
-def get_student_list(user_name, class_code):
+def get_student_list(user_name):
     stl = []
     scl = []
     result_list = []
-
+    class_code = account_tools.get_class_code(user_name)
     student_list = database_model.tb_StudentList()
     student_list.open_conn()
     student_list.class_code = class_code
@@ -122,7 +123,7 @@ def export_score_by_class(class_code):
 
 
 if __name__ == '__main__':
-    li = get_student_list('0121503490301', '1503')
+    li = get_student_list('0121503490301')
     es = export_score_by_class('1503')
     print(li)
     print(es)

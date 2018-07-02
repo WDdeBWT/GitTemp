@@ -130,7 +130,7 @@ def show_account():
     for al in al_list:
         if al[0] in ['1101', '1102']:
             continue
-        show_list.append((al[0], al[2], al[3]))
+        show_list.append([al[0], al[2], al[3]])
     return show_list
 
 if __name__=='__main__':

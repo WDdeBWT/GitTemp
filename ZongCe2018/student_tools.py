@@ -123,7 +123,4 @@ def export_score_by_class(class_code):
 
 
 if __name__ == '__main__':
-    li = get_student_list('0121503490301')
-    es = export_score_by_class('1503')
-    print(li)
-    print(es)
+    batch_import_student(r'C:\Users\baiwt\Desktop\班级学生列表.xlsx')

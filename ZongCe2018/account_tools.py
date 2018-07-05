@@ -134,5 +134,5 @@ def show_account():
     return show_list
 
 if __name__=='__main__':
-    # batch_import_users(r'C:\Users\baiwt\Desktop\评委小组账户.xlsx')
+    batch_import_users(r'C:\Users\baiwt\Desktop\评委小组账户.xlsx')
     print(show_account())

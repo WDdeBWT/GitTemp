@@ -117,7 +117,7 @@ def export_score_by_class(class_code):
             temp_list.sort()
             for tl in temp_list[1:-1]:
                 score_sum += tl
-            result_list.append([item[0], item[1], str(score_sum / (len(temp_list) - 2))])
+            result_list.append([item[0], item[1], str(score_sum / (len(temp_list) - 2)), str(len(temp_list))])
 
     return result_list
 

@@ -108,7 +108,7 @@ def export_score_by_class(class_code):
         score_sum = 0
         if len(item) < 7:
             # If the number of judges are less than five
-            result_list.append([item[0], item[1], "-1"])
+            result_list.append([item[0], item[1], "-1", '---'])
         else:
             for sub_item in item[2:]:
                 temp_sum = 0

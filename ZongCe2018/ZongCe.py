@@ -59,50 +59,50 @@ class AccountHandler(tornado.web.RequestHandler):
         self.finish()
 
 
-class ManagementAccountHandler(tornado.web.RequestHandler):
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+# class ManagementAccountHandler(tornado.web.RequestHandler):
+#     def set_default_headers(self):
+#         self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
+#         self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
+#         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
-    def get(self):
-        self.write("Hello world - GET")
-        return
+#     def get(self):
+#         self.write("Hello world - GET")
+#         return
 
-    def post(self):
-        file_path = 'temp.xlsx'
-        with open(file_path, 'wb') as up:
-            up.write(self.request.body)
-        account_tools.batch_import_users(file_path)
-        return
+#     def post(self):
+#         file_path = 'temp.xlsx'
+#         with open(file_path, 'wb') as up:
+#             up.write(self.request.body)
+#         account_tools.batch_import_users(file_path)
+#         return
     
-    def options(self):
-        # no body
-        self.set_status(204)
-        self.finish()
+#     def options(self):
+#         # no body
+#         self.set_status(204)
+#         self.finish()
 
 
-class ManagementStudentHandler(tornado.web.RequestHandler):
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+# class ManagementStudentHandler(tornado.web.RequestHandler):
+#     def set_default_headers(self):
+#         self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
+#         self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
+#         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
-    def get(self):
-        self.write("Hello world - GET")
-        return
+#     def get(self):
+#         self.write("Hello world - GET")
+#         return
 
-    def post(self):
-        file_path = 'temp.xlsx'
-        with open(file_path, 'wb') as up:
-            up.write(self.request.body)
-        student_tools.batch_import_student(file_path)
-        return
+#     def post(self):
+#         file_path = 'temp.xlsx'
+#         with open(file_path, 'wb') as up:
+#             up.write(self.request.body)
+#         student_tools.batch_import_student(file_path)
+#         return
     
-    def options(self):
-        # no body
-        self.set_status(204)
-        self.finish()
+#     def options(self):
+#         # no body
+#         self.set_status(204)
+#         self.finish()
 
 
 class ShowAccountHandler(tornado.web.RequestHandler):
@@ -190,8 +190,8 @@ application = tornado.web.Application([
     (r"/", MainHandler),
     (r"/ajax_test", AjaxHandler),
     (r"/ajax_account", AccountHandler),
-    (r"/ajax_management_account", ManagementAccountHandler),
-    (r"/ajax_management_student", ManagementStudentHandler),
+    # (r"/ajax_management_account", ManagementAccountHandler),
+    # (r"/ajax_management_student", ManagementStudentHandler),
     (r"/ajax_show_account", ShowAccountHandler),
     (r"/ajax_judge", JudgeHandler)
     ],**settings)

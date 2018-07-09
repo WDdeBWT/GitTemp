@@ -192,7 +192,7 @@ application = tornado.web.Application([
     (r"/ajax_account", AccountHandler),
     # (r"/ajax_management_account", ManagementAccountHandler),
     # (r"/ajax_management_student", ManagementStudentHandler),
-    (r"/ajax_show_account", ShowAccountHandler),
+    # (r"/ajax_show_account", ShowAccountHandler),
     (r"/ajax_judge", JudgeHandler)
     ],**settings)
 

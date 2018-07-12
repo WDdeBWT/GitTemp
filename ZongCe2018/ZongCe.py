@@ -4,6 +4,7 @@
 
 import os
 import json
+import base64
 
 import tornado.ioloop
 import tornado.web
@@ -163,6 +164,76 @@ class JudgeHandler(tornado.web.RequestHandler):
         self.finish()
 
 
+class PictureHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    def get(self):
+        user_name = self.get_argument('user_name', '')
+        self.write(json.dumps(account_tools.get_picture(user_name)))
+        return
+
+    def post(self):
+        self.write("Hello world - POST")
+        return
+    
+    def options(self):
+        # no body
+        self.set_status(204)
+        self.finish()
+
+
+class UploadHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    def get(self):
+        self.write("Hello world - GET")
+        return
+
+    def post(self):
+        data=json_decode(self.request.body)
+        # verify account
+        if not account_tools.verify_account(data['user_name'], data['password']):
+            self.write(json.dumps('disallow')) #如果密码错误，返回禁止访问信息
+            return
+        
+        # 处理base64编码字符串，得到原始二进制串
+        moving_pace = data['file'].find(';base64,') + 8
+        data['file'] = data['file'][moving_pace:]
+        # missing_padding = 4 - len(data['file']) % 4
+        # if missing_padding:
+        #     data['file'] += '=' * missing_padding
+        data_bytes = base64.b64decode(data['file'])
+        
+        if data['option_type'] == 'upload_profile_picture':
+            self.write(json.dumps(account_tools.upload_picture(data['user_name'], data['file_name'], data_bytes)))
+            return
+
+        elif data['option_type'] == 'batch_import_account':
+            if data['user_name'] != '1101':
+                self.write(json.dumps('disallow')) #如果密码错误，返回禁止访问信息
+                return
+            self.write(json.dumps(account_tools.batch_import_user_online(data_bytes)))
+            return
+        
+        elif data['option_type'] == 'batch_import_student':
+            if data['user_name'] != '1101':
+                self.write(json.dumps('disallow')) #如果密码错误，返回禁止访问信息
+                return
+            self.write(json.dumps(student_tools.batch_import_student_online(data_bytes)))
+            return
+    
+    def options(self):
+        # no body
+        self.set_status(204)
+        self.finish()
+
+
 class AjaxHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
@@ -183,7 +254,9 @@ class AjaxHandler(tornado.web.RequestHandler):
         self.finish()
 
 settings = {
-"static_path": os.path.join(os.path.dirname(__file__), "static")
+"static_path": os.path.join(os.path.dirname(__file__), "static"),
+"server_ip": '119.23.239.27:8088',
+"file_path": 'C:\\Files\\ZongCe2018'
 }
 
 application = tornado.web.Application([

@@ -2,13 +2,15 @@
 # @__Author__ = "WDdeBWT"
 # @__Date__ : "2018/05/09"
 
+import os
 import time
 import datetime
 
 import openpyxl
 
-import database_model
+import ZongCe
 import account_tools
+import database_model
 
 def batch_import_student(file_path):
     wb=openpyxl.load_workbook(file_path)
@@ -29,6 +31,12 @@ def batch_import_student(file_path):
         student_list.insert_data()
         time.sleep(0.05)
     student_list.close()
+
+def batch_import_student_online(data_bytes):
+    file_path = os.path.join(ZongCe.settings['file_path'] + '\\temp\\', 'temp.xlsx')
+    with open(file_path, 'wb') as up:
+        up.write(data_bytes)
+    batch_import_student(file_path)
 
 def get_student_list(user_name):
     stl = []

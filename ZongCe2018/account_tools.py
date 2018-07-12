@@ -2,10 +2,15 @@
 # @__Author__ = "WDdeBWT"
 # @__Date__ : "2018/05/07"
 
+import os
 import time
+import shutil
 
 import openpyxl
+import numpy as np
+from PIL import Image
 
+import ZongCe
 import database_model
 
 def verify_account(user_name = '', password = ''):
@@ -97,7 +102,7 @@ def init_password(user_name):
         al_tb.close()
         return 'Error: AccountManagementHandler POST init_password'
 
-def batch_import_users(file_path):
+def batch_import_user(file_path):
     wb=openpyxl.load_workbook(file_path)
     sheet=wb[(wb.sheetnames[0])]
     rows=[]
@@ -119,6 +124,12 @@ def batch_import_users(file_path):
         time.sleep(0.05)
     accountList.close()
 
+def batch_import_user_online(data_bytes):
+    file_path = os.path.join(ZongCe.settings['file_path'] + '\\temp\\', 'temp.xlsx')
+    with open(file_path, 'wb') as up:
+        up.write(data_bytes)
+    batch_import_user(file_path)
+    
 
 def show_account():
     show_list = []
@@ -134,4 +145,44 @@ def show_account():
     return show_list
 
 if __name__=='__main__':
-    batch_import_users(r'C:\Users\baiwt\Desktop\评委小组账户.xlsx')
+    batch_import_user(r'C:\Users\baiwt\Desktop\评委小组账户.xlsx')
+
+def get_picture(user_name):
+    pass
+    avatar_id = None
+    ad_tb = database_model.tb_AccountDetail(user_name)
+    ad_tb.open_conn()
+    avatar_list = ad_tb.select_data_by_username()
+    if avatar_list:
+        avatar_id = avatar_list[0][2]
+    ad_tb.close()
+    if avatar_id:
+        shutil.copyfile(os.path.join(ZongCe.settings['file_path'] + '\\profile_picture\\', str(avatar_id).strip() + '.jpg')
+            , os.path.join(ZongCe.settings['static_path'] + '\\profile_picture\\', str(avatar_id).strip() + '.jpg'))
+        return 'http://' + ZongCe.settings['server_ip'] + '/static/profile_picture/' + str(avatar_id) + '.jpg'
+    else:
+        return 'http://' + ZongCe.settings['server_ip'] + '/static/profile_picture/default.jpg'
+
+def upload_picture(user_name, file_name, file_bytes):
+    pass
+    temp_path = os.path.join(ZongCe.settings['file_path'] + '\\temp\\', file_name)
+    with open(temp_path, 'wb') as up:
+        up.write(file_bytes)
+    ad_tb = database_model.tb_AccountDetail(user_name)
+    ad_tb.open_conn()
+    # 获取新图片编号并存入数据库
+    new_avatar_id = ad_tb.update_avatar()
+    ad_tb.close()
+    if not new_avatar_id:
+        return 'False'
+    save_path = os.path.join(ZongCe.settings['file_path'] + '\\profile_picture\\', str(new_avatar_id).strip() + '.jpg')
+    # PIL库联合numpy库处理图片
+    ori_img = Image.open(temp_path)
+    template_size = min(ori_img.width, ori_img.height) // 2
+    center_width = ori_img.width // 2
+    center_height = ori_img.height // 2
+    region = ((center_width-template_size), (center_height-template_size), (center_width+template_size), (center_height+template_size))
+    new_img = ori_img.crop(region)
+    new_img.save(save_path)
+    # 复制文件到static目录
+    return 'True'

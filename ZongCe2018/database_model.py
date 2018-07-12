@@ -136,3 +136,84 @@ class tb_ScoreList:
     def select_data_by_evaid(self):
         sql = "SELECT * FROM scoreList WHERE eva_id = '" + str(self.eva_id) + "'"
         return self.ms_sql.ExecQuery(sql)
+
+
+class tb_AccountDetail:
+    def __init__(self, user_name = '', slogan = '', user_avatar = ''):
+        self.user_name = user_name
+        self.slogan = slogan
+        self.user_avatar = user_avatar
+        self.ms_sql = None
+    
+    def open_conn(self):
+        self.ms_sql = MSSQL()
+
+    def close(self):
+        self.ms_sql.close_connection()
+    
+    def insert_data(self):
+        sql = "INSERT INTO studentList VALUES('" + str(self.user_name) + "', '" + str(self.slogan) + "','" + str(self.user_avatar) + "')"
+        if self.ms_sql.ExecNonQuery(sql):
+            return True
+        else:
+            print("---------- tb_AccountDetail 保存到数据库失败 ----------")
+            return False
+
+    def delete_data(self):
+        sql = "DELETE FROM studentList WHERE user_name = '" + self.user_name + "'"
+        if self.ms_sql.ExecNonQuery(sql):
+            return True
+        else:
+            print("---------- tb_AccountDetail 删除到数据库失败 ----------")
+            return False 
+
+    def select_data(self):
+        sql = "SELECT * FROM studentList"
+        return self.ms_sql.ExecQuery(sql)
+    
+    def select_data_by_username(self):
+        sql = "SELECT * FROM studentList WHERE user_name = '" + self.user_name + "'"
+        return self.ms_sql.ExecQuery(sql)
+    
+    def update_avatar(self):
+        sql_0 = 'SELECT MAX(user_avatar)+1 FROM studentList'
+        new_avatar_id = self.ms_sql.ExecQuery(sql_0)[0][0]
+        sql = "UPDATE studentList SET user_avatar = '" + str(new_avatar_id) + "' WHERE user_name = '" + self.user_name + "'"
+        if self.ms_sql.ExecNonQuery(sql):
+            return new_avatar_id
+        else:
+            print("---------- tb_AccountDetail 执行update_avatar到数据库失败 ----------")
+            return False
+    
+    def update_slogan(self):
+        sql = "UPDATE studentList SET slogan = '" + str(self.slogan) + "' WHERE user_name = '" + self.user_name + "'"
+        if self.ms_sql.ExecNonQuery(sql):
+            return True
+        else:
+            print("---------- tb_AccountDetail 执行update_slogan到数据库失败 ----------")
+            return False 
+
+
+class tb_LoginLog:
+    def __init__(self, user_name = '', login_time = ''):
+        self.user_name = user_name
+        self.login_time = login_time
+        self.ms_sql = None
+    
+    def open_conn(self):
+        self.ms_sql = MSSQL()
+
+    def close(self):
+        self.ms_sql.close_connection()
+    
+    def insert_data(self):
+        sql = "INSERT INTO loginLog VALUES('" + str(self.user_name) + "', '" + str(self.login_time) + "')"
+        if self.ms_sql.ExecNonQuery(sql):
+            return True
+        else:
+            print("---------- tb_LoginLog 保存到数据库失败 ----------")
+            return False
+
+    def select_data(self):
+        sql = "SELECT * FROM loginLog"
+        return self.ms_sql.ExecQuery(sql)

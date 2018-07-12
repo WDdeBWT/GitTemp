@@ -23,10 +23,10 @@ class MSSQL:
         返回: conn.cursor()
         """
 
-                # 配置信息
-        # imf_path = r'C:\Baiwt\Files\mssql_account.csv' # XPS13
-        imf_path = r'C:\Files\mssql_account.csv' # Aliyun_Bai
-        db_host = '127.0.0.1'
+        # 配置信息
+        imf_path = r'C:\Baiwt\Files\mssql_account.csv' # XPS13
+        # imf_path = r'C:\Files\mssql_account.csv' # Aliyun_Bai
+        db_host = '119.23.239.27'
         db_user = 'WeiboSpiderUser'
         db_password = ''
         db_database = 'ZongCe2018'

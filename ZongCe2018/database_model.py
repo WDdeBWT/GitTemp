@@ -152,7 +152,7 @@ class tb_AccountDetail:
         self.ms_sql.close_connection()
     
     def insert_data(self):
-        sql = "INSERT INTO studentList VALUES('" + str(self.user_name) + "', '" + str(self.slogan) + "','" + str(self.user_avatar) + "')"
+        sql = "INSERT INTO accountDetail VALUES('" + str(self.user_name) + "', '" + str(self.slogan) + "','" + str(self.user_avatar) + "')"
         if self.ms_sql.ExecNonQuery(sql):
             return True
         else:
@@ -160,7 +160,7 @@ class tb_AccountDetail:
             return False
 
     def delete_data(self):
-        sql = "DELETE FROM studentList WHERE user_name = '" + self.user_name + "'"
+        sql = "DELETE FROM accountDetail WHERE user_name = '" + self.user_name + "'"
         if self.ms_sql.ExecNonQuery(sql):
             return True
         else:
@@ -168,17 +168,17 @@ class tb_AccountDetail:
             return False 
 
     def select_data(self):
-        sql = "SELECT * FROM studentList"
+        sql = "SELECT * FROM accountDetail"
         return self.ms_sql.ExecQuery(sql)
     
     def select_data_by_username(self):
-        sql = "SELECT * FROM studentList WHERE user_name = '" + self.user_name + "'"
+        sql = "SELECT * FROM accountDetail WHERE user_name = '" + self.user_name + "'"
         return self.ms_sql.ExecQuery(sql)
     
     def update_avatar(self):
-        sql_0 = 'SELECT MAX(user_avatar)+1 FROM studentList'
+        sql_0 = 'SELECT MAX(user_avatar)+1 FROM accountDetail'
         new_avatar_id = self.ms_sql.ExecQuery(sql_0)[0][0]
-        sql = "UPDATE studentList SET user_avatar = '" + str(new_avatar_id) + "' WHERE user_name = '" + self.user_name + "'"
+        sql = "UPDATE accountDetail SET user_avatar = '" + str(new_avatar_id) + "' WHERE user_name = '" + self.user_name + "'"
         if self.ms_sql.ExecNonQuery(sql):
             return new_avatar_id
         else:
@@ -186,7 +186,7 @@ class tb_AccountDetail:
             return False
     
     def update_slogan(self):
-        sql = "UPDATE studentList SET slogan = '" + str(self.slogan) + "' WHERE user_name = '" + self.user_name + "'"
+        sql = "UPDATE accountDetail SET slogan = '" + str(self.slogan) + "' WHERE user_name = '" + self.user_name + "'"
         if self.ms_sql.ExecNonQuery(sql):
             return True
         else:

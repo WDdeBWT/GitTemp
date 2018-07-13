@@ -207,4 +207,5 @@ def get_login_log():
     ll_tb.close()
     for ll in all_ll:
         log_list.append([str(ll[0]), str(ll[1])])
+    log_list.sort(key=lambda k: (k[1]), reverse = True)
     return log_list

@@ -244,7 +244,7 @@ application = tornado.web.Application([
     (r"/", MainHandler),
     (r"/ajax_test", AjaxHandler),
     (r"/ajax_account", AccountHandler),
-    # (r"/ajax_show_account", ShowAccountHandler),
+    (r"/ajax_show_account", ShowAccountHandler),
     (r"/ajax_judge", JudgeHandler),
     (r"/ajax_picture", PictureHandler),
     (r"/ajax_log", LogHandler),

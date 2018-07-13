@@ -30,6 +30,7 @@ class AccountHandler(tornado.web.RequestHandler):
         user_name = self.get_argument('user_name', '')
         password = self.get_argument('password', '')
         return_message = account_tools.verify_account(user_name, password)
+        account_tools.set_login_log(user_name)
         if return_message:
             self.write(json.dumps(return_message))
             return
@@ -188,6 +189,32 @@ class UploadHandler(tornado.web.RequestHandler):
         self.finish()
 
 
+class LogHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+    def get(self):
+        self.write("Hello world - GET")
+        return
+
+    def post(self):
+        data=json_decode(self.request.body)
+        # verify account
+        if not account_tools.verify_account('1101', data['password']):
+            self.write(json.dumps('disallow')) #如果密码错误，返回禁止访问信息
+            return
+        self.write(json.dumps(account_tools.get_login_log()))
+        return
+
+
+    def options(self):
+        # no body
+        self.set_status(204)
+        self.finish()
+
+
 class AjaxHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
@@ -220,6 +247,7 @@ application = tornado.web.Application([
     # (r"/ajax_show_account", ShowAccountHandler),
     (r"/ajax_judge", JudgeHandler),
     (r"/ajax_picture", PictureHandler),
+    (r"/ajax_log", LogHandler),
     (r"/ajax_upload", UploadHandler)
     ],**settings)
 

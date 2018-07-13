@@ -5,6 +5,7 @@
 import os
 import time
 import shutil
+import datetime
 
 import openpyxl
 import numpy as np
@@ -184,3 +185,26 @@ def upload_picture(user_name, file_name, file_bytes):
     new_img.save(save_path)
     # 复制文件到static目录
     return 'True'
+
+def set_login_log(user_name):
+    try:
+        login_time = datetime.datetime.now().strftime(r'%Y-%m-%d %H:%M:%S')
+        ll_tb = database_model.tb_LoginLog(user_name, login_time)
+        ll_tb.open_conn()
+        # 获取新图片编号并存入数据库
+        ll_tb.insert_data()
+        ll_tb.close()
+    except Exception as e:
+        print(e)
+        print("^TIME^: " + str(time.strftime('%m-%d %H:%M:%S',time.localtime(time.time()))))
+
+def get_login_log():
+    log_list = []
+    ll_tb = database_model.tb_LoginLog()
+    ll_tb.open_conn()
+    # 获取新图片编号并存入数据库
+    all_ll = ll_tb.select_data()
+    ll_tb.close()
+    for ll in all_ll:
+        log_list.append([ll[0], ll[1]])
+    return log_list

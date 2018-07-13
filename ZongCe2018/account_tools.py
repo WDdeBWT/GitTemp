@@ -206,5 +206,5 @@ def get_login_log():
     all_ll = ll_tb.select_data()
     ll_tb.close()
     for ll in all_ll:
-        log_list.append([ll[0], ll[1]])
+        log_list.append([str(ll[0]), str(ll[1])])
     return log_list

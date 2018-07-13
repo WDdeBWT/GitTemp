@@ -178,6 +178,10 @@ class tb_AccountDetail:
     def update_avatar(self):
         sql_0 = 'SELECT MAX(user_avatar)+1 FROM accountDetail'
         new_avatar_id = self.ms_sql.ExecQuery(sql_0)[0][0]
+        avatar_list = self.select_data_by_username()
+        if not avatar_list:
+            if not self.insert_data():
+                return False
         sql = "UPDATE accountDetail SET user_avatar = '" + str(new_avatar_id) + "' WHERE user_name = '" + self.user_name + "'"
         if self.ms_sql.ExecNonQuery(sql):
             return new_avatar_id

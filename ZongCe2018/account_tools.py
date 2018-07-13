@@ -148,7 +148,6 @@ if __name__=='__main__':
     batch_import_user(r'C:\Users\baiwt\Desktop\评委小组账户.xlsx')
 
 def get_picture(user_name):
-    pass
     avatar_id = None
     ad_tb = database_model.tb_AccountDetail(user_name)
     ad_tb.open_conn()
@@ -164,7 +163,6 @@ def get_picture(user_name):
         return 'http://' + ZongCe.settings['server_ip'] + '/static/profile_picture/default.jpg'
 
 def upload_picture(user_name, file_name, file_bytes):
-    pass
     temp_path = os.path.join(ZongCe.settings['file_path'] + '\\temp\\', file_name)
     with open(temp_path, 'wb') as up:
         up.write(file_bytes)

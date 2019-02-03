@@ -131,4 +131,4 @@ def export_score_by_class(class_code):
 
 
 if __name__ == '__main__':
-    batch_import_student(r'C:\Users\baiwt\Desktop\班级学生列表.xlsx')
+    batch_import_student(r'C:\Users\baiwt\Desktop\班级学生列表（xg1502）.xlsx')

@@ -130,7 +130,6 @@ def batch_import_user_online(data_bytes):
     with open(file_path, 'wb') as up:
         up.write(data_bytes)
     batch_import_user(file_path)
-    
 
 def show_account():
     show_list = []
@@ -145,8 +144,6 @@ def show_account():
         show_list.append([al[2], al[3]])
     return show_list
 
-if __name__=='__main__':
-    batch_import_user(r'C:\Users\baiwt\Desktop\评委小组账户.xlsx')
 
 def get_picture(user_name):
     avatar_id = None
@@ -209,3 +206,6 @@ def get_login_log():
         log_list.append([str(ll[0]), str(ll[1])])
     log_list.sort(key=lambda k: (k[1]), reverse = True)
     return log_list
+
+if __name__=='__main__':
+    batch_import_user(r'C:\Users\baiwt\Desktop\评委小组账户（信管1502）.xlsx')

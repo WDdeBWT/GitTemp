@@ -24,10 +24,10 @@ class MSSQL:
         """
 
         # 配置信息
-        # imf_path = r'C:\Baiwt\Files\mssql_account.csv' # XPS13
-        # db_host = '119.23.239.27'
-        imf_path = r'C:\Files\mssql_account.csv' # Aliyun_Bai
-        db_host = '127.0.0.1'
+        imf_path = r'C:\Baiwt\Files\mssql_account.csv' # XPS13
+        db_host = '119.23.239.27'
+        # imf_path = r'C:\Files\mssql_account.csv' # Aliyun_Bai
+        # db_host = '127.0.0.1'
         db_user = 'WeiboSpiderUser'
         db_password = ''
         db_database = 'ZongCe2018'
